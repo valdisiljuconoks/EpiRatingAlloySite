@@ -1,0 +1,37 @@
+﻿
+<style>
+    #ratingSection {
+        margin-bottom: 100px;
+    }
+
+
+</style>
+
+@{
+    var contentId = ViewData["ContentId"] ?? string.Empty;
+}
+
+
+<div id="ratingSection" data-contentId="@contentId">
+    <div class="row">
+        <div class="col-sm-6">
+            Fikk du svar pa det du lurte pa ?
+        </div>
+        <div class="col-sm-6">
+            <button type="button" class="btn btn-default" id="btnYes">Ja</button>
+            <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#commentArea" id="btnNo">Nei</button>
+        </div>
+    </div>
+    <div id="commentArea" class="collapse row">
+        <div>
+            <label>Comments:</label>
+            <textarea id="commentText"></textarea>
+        </div>
+        <div>
+            <button type="button" id="btnSendRatingComment">Send</button>
+        </div>
+    </div>
+    <div id="thankyouMessage" style="display: none;">
+        Thank you!
+    </div>
+</div>
