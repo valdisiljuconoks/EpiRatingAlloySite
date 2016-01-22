@@ -1,5 +1,6 @@
 ﻿@using System.Web.Optimization
 @using EPiServer.Framework.Web.Mvc.Html
+@using Geta.EpiRatingAlloySite.Models
 @model IPageViewModel<SitePageData>
 <!DOCTYPE html>
 <html lang="@Model.CurrentPage.LanguageBranch">
@@ -29,7 +30,11 @@
                 Html.RenderPartial("Footer", Model);
             }
 
-            @Html.Partial("RatingPartial", new ViewDataDictionary { { "ContentId", @Model.CurrentPage.ContentLink.ID } })
+            @if (Model.CurrentPage is IRatingPage && ((IRatingPage)Model.CurrentPage).RatingEnabled)
+            {
+                @Html.Partial("RatingPartial", new ViewDataDictionary { { "ContentId", @Model.CurrentPage.ContentLink.ID } })
+            }
+            
 
         </div>
         @Html.RequiredClientResources("Footer")

@@ -24,6 +24,7 @@ namespace Geta.EpiRatingAlloySite.Models.Pages
             Order = 320)]
         public virtual ContentArea MainContentArea { get; set; }
 
+        [Display(GroupName = "Rating")]
         public virtual bool RatingEnabled { get; set; }
     }
 }

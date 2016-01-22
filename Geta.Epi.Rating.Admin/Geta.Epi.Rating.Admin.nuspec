@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Geta.Epi.Rating.Admin</id>
+    <version>0.1.0</version>
+    <title>Geta Rating Admin</title>
+    <authors>Geta</authors>
+    <owners>Geta</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Admin UI for Rating module</description>
+    <copyright>Copyright Geta 2016</copyright>
+    <tags>EPiServerModulePackage</tags>
+    
+  </metadata>
+<files>
+    <file src="bin\Geta.Epi.Rating.Admin.dll" target="lib\net46\Geta.Epi.Rating.Admin.dll" />
+    <file src="Views\Default\*" target="content\modules\_protected\Geta.Epi.Rating.Admin\Views\Default" />
+    <file src="Views\Shared\_Layout.cshtml" target="content\modules\_protected\Geta.Epi.Rating.Admin\Views\Shared\_Layout.cshtml" />
+    <file src="Views\_ViewStart.cshtml" target="content\modules\_protected\Geta.Epi.Rating.Admin\Views\_ViewStart.cshtml" />
+    <file src="Scripts\*" target="content\modules\_protected\Geta.Epi.Rating.Admin\Scripts" />
+    <file src="Styles\*" target="content\modules\_protected\Geta.Epi.Rating.Admin\Styles" />
+    <file src="module.config" target="content\modules\_protected\Geta.Epi.Rating.Admin\module.config" />
+    <file src="Views\Web.config" target="content\modules\_protected\Geta.Epi.Rating.Admin\Views\Web.config"/>
+</files>
+</package>

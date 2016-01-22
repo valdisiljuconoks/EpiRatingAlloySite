@@ -1,0 +1,28 @@
+﻿@using EPiServer.Shell
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title></title>
+
+    <link type="text/css" rel="stylesheet" href='@Paths.ToClientResource("CMS", "/App_Themes/Default/Styles/ToolButton.css")' />
+    <link type="text/css" rel="stylesheet" href='@Paths.ToClientResource("CMS", "/App_Themes/Default/Styles/system.css")' />
+    <link type="text/css" rel="stylesheet" href='@Paths.ToClientResource("CMS", "ClientResources/Epi/Base/CMS.css")' />
+   
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" />
+    <script src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.0/mustache.min.js"></script>
+    <script type="text/javascript" src="Scripts/rating-admin.js"> </script>
+    
+</head>
+<body>
+    
+    @RenderBody()
+
+</body>
+</html>

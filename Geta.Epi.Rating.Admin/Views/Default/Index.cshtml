@@ -1,0 +1,39 @@
+﻿
+<div style="width: 80%" class="epi-padding-large">
+    <div id="tablePlaceholder" >
+
+    </div>
+</div>
+
+<script id="ratings-template" type="x-tmpl-mustache">
+
+    <table id="ratingTable">
+        <thead>
+            <tr>
+                <th>Page Name</th>
+                <th>Rating</th>
+                <th>Comments</th>
+                <th>Rating enabled</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {{#ratingData}}
+            <tr>
+                <td>
+                    {{pageName}}
+                </td>
+                <td>
+                    {{rating}}
+                </td>
+                <td>
+                    {{#comments}}{{.}}; {{/comments}}
+                </td>
+                <td>
+                    {{ratingEnabled}}
+                </td>
+            </tr>
+            {{/ratingData}}
+        </tbody>
+    </table>
+</script>
