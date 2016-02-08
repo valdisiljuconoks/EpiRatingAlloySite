@@ -2,9 +2,6 @@
 
     GetRatings();
 
-    $("ratingTable").DataTable();
-
-
     function GetRatings() {
 
         var url = "/api/rating/getratings";
@@ -18,6 +15,7 @@
                 var template = $("#ratings-template").html();
                 var info = Mustache.to_html(template, data);
                 $("#tablePlaceholder").html(info);
+                $("#ratingTable").DataTable();
 
             })
             .fail(function (error) {
@@ -25,9 +23,4 @@
                 //show error
             });
     }
-
-
-
-
-
 });
