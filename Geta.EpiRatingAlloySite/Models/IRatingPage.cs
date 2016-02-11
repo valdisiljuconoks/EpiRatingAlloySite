@@ -9,5 +9,7 @@ namespace Geta.EpiRatingAlloySite.Models
     public interface IRatingPage
     {
         bool RatingEnabled { get; set; }
+
+        bool IgnorePublish { get; set; }
     }
 }

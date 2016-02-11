@@ -30,12 +30,19 @@
                 Html.RenderPartial("Footer", Model);
             }
 
-            @if (Model.CurrentPage is IRatingPage && ((IRatingPage)Model.CurrentPage).RatingEnabled)
-            {
-                @Html.Partial("RatingPartial", new ViewDataDictionary { { "ContentId", @Model.CurrentPage.ContentLink.ID } })
-            }
-            
+            @{
+                var ratingPage = Model.CurrentPage as IRatingPage;
 
+                if (ratingPage != null && ratingPage.RatingEnabled)
+                {
+                    @Html.Partial("RatingPartial", new RatingViewModel
+                    {
+                        ContentId = @Model.CurrentPage.ContentLink.ID.ToString(),
+                        IgnorePublish = ratingPage.IgnorePublish,
+                        PublishDate = Model.CurrentPage.Saved
+                    })
+                }
+            }
         </div>
         @Html.RequiredClientResources("Footer")
     </body>

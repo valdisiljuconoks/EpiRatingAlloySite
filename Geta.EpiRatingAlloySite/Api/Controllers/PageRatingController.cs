@@ -16,6 +16,9 @@ using Geta.EPi.Rating.Core;
 using Geta.EPi.Rating.Core.Models;
 using NuGet;
 using ILogger = EPiServer.Logging.ILogger;
+using EPiServer.Web.Routing;
+using EPiServer.Editor;
+using Newtonsoft.Json;
 
 namespace Geta.EpiRatingAlloySite.Api.Controllers
 {
@@ -24,14 +27,19 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
     {
         private readonly IReviewService _reviewService;
         private readonly ILogger _logger = LogManager.GetLogger();
-        private readonly IContentLoader _repo;
+        private readonly IContentLoader _loader;
+        private readonly IContentRepository _repository;
+        private readonly UrlResolver _urlResolver;
+        //private readonly ContentAssetHelper _contentAssetHelper;
         private ContentAssetHelper contentAssetHelper;
 
         public PageRatingController()
         {
             _reviewService = ServiceLocator.Current.GetInstance<IReviewService>();
-            _repo = ServiceLocator.Current.GetInstance<IContentLoader>();
+            _loader = ServiceLocator.Current.GetInstance<IContentLoader>();
             contentAssetHelper = ServiceLocator.Current.GetInstance<ContentAssetHelper>();
+            _repository = ServiceLocator.Current.GetInstance<IContentRepository>();
+            _urlResolver = ServiceLocator.Current.GetInstance<UrlResolver>();
             //_logger = logger;
         }
 
@@ -61,10 +69,17 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
             }
         }
 
+        public class RatingFilter
+        {
+            [JsonProperty("dateFrom")]
+            public DateTime? DateFrom { get; set; }
+            [JsonProperty("dateTo")]
+            public DateTime? DateTo { get; set; }
+        }
 
         [Route("getratings")]
         [HttpGet]
-        public RatingListDto GetRatings()
+        public RatingListDto GetRatings([FromUri]RatingFilter filterParams)
         {
             var filter = new FilterContentForVisitor();
             var pages = GetChildPages(ContentReference.StartPage).ToList();
@@ -73,19 +88,29 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
 
             foreach (var ratingPage in pages.OfType<IRatingPage>())
             {
-                var ratings = _reviewService.GetReviews(((IContent)ratingPage).ContentLink);
+                var ratingPageContent = (IContent)ratingPage;
+
+                var ratings = GetReviews(ratingPageContent.ContentLink);
 
                 if (ratings == null)
                 {
                     continue;
                 }
 
+                if (filterParams != null)
+                {
+                    ratings = ratings.Where(r => (!filterParams.DateFrom.HasValue || (filterParams.DateFrom.HasValue && r.Created >= filterParams.DateFrom.Value)) &&
+                                                 (!filterParams.DateTo.HasValue || (filterParams.DateTo.HasValue && r.Created <= filterParams.DateTo.Value)));
+                }
+
                 var ratingTableData = new RatingTableData()
                 {
-                    PageName = ((IContent)ratingPage).Name,
+                    PageName = ratingPageContent.Name,
                     Comments = ratings.Select(r => r.Text).Where(r => !string.IsNullOrEmpty(r)),
                     Rating = (int)ratings.Select(r => r.Rating).Sum(),
-                    RatingEnabled = ratingPage.RatingEnabled
+                    RatingEnabled = ratingPage.RatingEnabled,
+                    ContentId = ratingPageContent.ContentLink.ID.ToString(),
+                    ContentUrl = PageEditing.GetEditUrl(ratingPageContent.ContentLink)
                 };
 
                 ratingList.Add(ratingTableData);
@@ -99,6 +124,62 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
             return ratingInfo;
         }
 
+        public IEnumerable<Review> GetReviews(ContentReference contentReference)
+        {
+            
+            //contentReference.
+            //var product = _loader.Get<IContent>(contentReference);
+
+            var assetFolder = contentAssetHelper.GetAssetFolder(contentReference);
+
+            if(assetFolder == null)
+            {
+                return null;
+            }
+            return _loader.GetChildren<Review>(assetFolder.ContentLink);
+                //.OrderByDescending(m => m.StartPublish);
+        }
+
+
+        [Route("enablerating")]
+        [HttpPost]
+        public void EnableRating(RatingSwitchDto actionInfo)
+        {
+            ContentReference reviewPageReference;
+
+            if (ContentReference.TryParse(actionInfo.ContentId, out reviewPageReference))
+            {
+                var page = _loader.Get<PageData>(reviewPageReference);
+                var writablePage = page.CreateWritableClone();
+                var ratingPage = writablePage as IRatingPage;
+
+                if (ratingPage != null)
+                {
+                    ratingPage.RatingEnabled = actionInfo.RatingEnabled;
+                }
+
+                _repository.Save(writablePage, EPiServer.DataAccess.SaveAction.Publish);
+            }
+        }
+
+        [Route("pageispublished")]
+        [HttpGet]
+        public ResponseDto PageIsPublished(RatingSwitchDto actionInfo)
+        {
+            ContentReference reviewPageReference;
+
+            var response = new ResponseDto();
+
+            if (ContentReference.TryParse(actionInfo.ContentId, out reviewPageReference))
+            {
+
+                var page = _loader.Get<PageData>(reviewPageReference);
+
+                response.PageIsPublished = page.Status == VersionStatus.Published;
+            }
+            return response;
+        }
+
         private IEnumerable<IContent> GetChildPages(ContentReference levelRootLink, ICollection<IContent> pages = null)
         {
             if (pages == null)
@@ -106,7 +187,7 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
                 pages = new List<IContent>();
             }
 
-            var children = _repo.GetChildren<IContent>(levelRootLink).ToList();
+            var children = _loader.GetChildren<IContent>(levelRootLink).ToList();
 
             if (children.Any())
             {
@@ -129,10 +210,18 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
 
         private void AddCookie(string contentId)
         {
-            if (HttpContext.Current != null)
+            if (HttpContext.Current == null)
             {
-                HttpContext.Current.Response.Cookies.Add(new HttpCookie($"IsRated_{contentId}", "1"));
+                return;
             }
+
+            var ratingCookie = HttpContext.Current.Request.Cookies["Ratings"] ?? new HttpCookie("Ratings") { HttpOnly = false };
+            ratingCookie.Expires = DateTime.Now.AddYears(1);
+            var cookieSubkeyName = $"c_{contentId}";
+            var cookieSubkeyValue = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+            ratingCookie.Values.Remove(cookieSubkeyName);
+            ratingCookie.Values.Add(cookieSubkeyName, cookieSubkeyValue);
+            HttpContext.Current.Response.Cookies.Add(ratingCookie);
         }
     }
 }

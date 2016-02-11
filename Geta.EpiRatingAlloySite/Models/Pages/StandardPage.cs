@@ -26,5 +26,8 @@ namespace Geta.EpiRatingAlloySite.Models.Pages
 
         [Display(GroupName = "Rating")]
         public virtual bool RatingEnabled { get; set; }
+
+        [Display(GroupName = "Rating")]
+        public virtual bool IgnorePublish { get; set; }
     }
 }

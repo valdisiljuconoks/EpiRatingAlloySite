@@ -26,5 +26,9 @@ namespace Geta.EpiRatingAlloySite.Api.Models
         public IEnumerable<string> Comments { get; set; }
         [JsonProperty("ratingEnabled")]
         public bool RatingEnabled { get; set; }
+        [JsonProperty("contentId")]
+        public string ContentId { get; set; }
+        [JsonProperty("contentUrl")]
+        public string ContentUrl { get; set; }
     }
 }

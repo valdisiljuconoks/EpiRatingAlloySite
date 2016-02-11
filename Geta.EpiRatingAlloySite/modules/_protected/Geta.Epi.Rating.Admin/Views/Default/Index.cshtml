@@ -1,13 +1,24 @@
 ﻿
-<div style="width: 80%" class="epi-padding-large">
-    <div id="tablePlaceholder" >
+<div class="epi-padding">
+    <div class="epi-contentArea">
+        <h1 class="EP-prefix">Page Rating Overview</h1>
+        <div class="rating-filter-content">
+            <label>From:</label>
+            <input type="date" id="txtFrom" />
+            <label>To:</label>
+            <input type="date" id="txtTo">
+            <button id="btnFilter" class="epi-cmsButton">Filter</button>
+        </div>
 
+        <div id="tablePlaceholder">
+
+        </div>
     </div>
 </div>
 
 <script id="ratings-template" type="x-tmpl-mustache">
 
-    <table id="ratingTable">
+    <table id="ratingTable" class="display">
         <thead>
             <tr>
                 <th>Page Name</th>
@@ -21,7 +32,7 @@
             {{#ratingData}}
             <tr>
                 <td>
-                    {{pageName}}
+                    <a href="{{contentUrl}}" target="_parent">{{pageName}}</a>
                 </td>
                 <td>
                     {{rating}}
@@ -30,7 +41,7 @@
                     {{#comments}}{{.}}; {{/comments}}
                 </td>
                 <td>
-                    {{ratingEnabled}}
+                    <input name="ratingSwitch" type="checkbox" {{checked}} data-contentId="{{contentId}}" />
                 </td>
             </tr>
             {{/ratingData}}

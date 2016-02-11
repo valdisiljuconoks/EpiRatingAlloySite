@@ -279,6 +279,8 @@
     <Compile Include="Api\Controllers\PageRatingController.cs" />
     <Compile Include="Api\Models\RatingDto.cs" />
     <Compile Include="Api\Models\RatingListDto.cs" />
+    <Compile Include="Api\Models\RatingSwitchDto.cs" />
+    <Compile Include="Api\Models\ResponseDto.cs" />
     <Compile Include="Business\Channels\DisplayResolutionBase.cs" />
     <Compile Include="Business\Channels\DisplayResolutions.cs" />
     <Compile Include="Business\Channels\MobileChannel.cs" />
@@ -363,6 +365,7 @@
     <Compile Include="Models\ViewModels\PageViewModel.cs" />
     <Compile Include="Models\ViewModels\PreviewModel.cs" />
     <Compile Include="Models\ViewModels\RatingModel.cs" />
+    <Compile Include="Models\ViewModels\RatingViewModel.cs" />
     <Compile Include="Models\ViewModels\SearchContentModel.cs" />
     <Compile Include="Models\ViewModels\VideoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -378,6 +381,7 @@
     <Content Include="modules\Geta.CacheManager\Views\Shared\CacheList.ascx" />
     <Content Include="modules\Geta.CacheManager\Views\Shared\SystemStats.ascx" />
     <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Scripts\rating-admin.js" />
+    <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Styles\rating.css" />
     <Content Include="Static\js\rating.js" />
     <Content Include="ClientResources\Styles\LayoutIcons.css" />
     <Content Include="ClientResources\Styles\Styles.css" />

@@ -1,4 +1,4 @@
-﻿
+﻿@model RatingViewModel
 <style>
     #ratingSection {
         margin-bottom: 100px;
@@ -8,11 +8,30 @@
 </style>
 
 @{
-    var contentId = ViewData["ContentId"] ?? string.Empty;
+    if (Model == null)
+    {
+        return;
+    }
+
+    var cookie = HttpContext.Current.Request.Cookies["Ratings"];
+
+    if (cookie != null && cookie.Values.HasKeys())
+    {
+        var subKeyValue = cookie.Values["c_" + Model.ContentId];
+
+        if (!string.IsNullOrEmpty(subKeyValue))
+        {
+            DateTime ratingDate;
+            if (Model.IgnorePublish || (DateTime.TryParse(subKeyValue, out ratingDate) && ratingDate > Model.PublishDate))
+            {
+                return;
+            }
+        }
+    }
 }
 
 
-<div id="ratingSection" data-contentId="@contentId">
+<div id="ratingSection" data-contentId="@Model.ContentId">
     <div class="row">
         <div class="col-sm-6">
             Fikk du svar pa det du lurte pa ?

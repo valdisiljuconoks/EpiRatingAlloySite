@@ -10,44 +10,26 @@
     <meta name="viewport" content="width=device-width">
     <title></title>
 
+    @Html.Raw(ClientResources.RenderResources("ShellCore"))
+    @Html.Raw(ClientResources.RenderResources("ShellCoreLightTheme"))
     <link type="text/css" rel="stylesheet" href='@Paths.ToClientResource("CMS", "/App_Themes/Default/Styles/ToolButton.css")' />
     <link type="text/css" rel="stylesheet" href='@Paths.ToClientResource("CMS", "/App_Themes/Default/Styles/system.css")' />
     <link type="text/css" rel="stylesheet" href='@Paths.ToClientResource("CMS", "ClientResources/Epi/Base/CMS.css")' />
-    <!-- Shell -->
-    @Html.Raw(ClientResources.RenderResources("ShellCore"))
-
-    @Html.Raw(ClientResources.RenderResources("ShellWidgets"))
-    <!-- LightTheme -->
-    @Html.Raw(ClientResources.RenderResources("ShellCoreLightTheme"))
-    <!-- Navigation -->
-    @Html.Raw(ClientResources.RenderResources("Navigation"))
-    <!-- Dojo Dashboard -->
-    @Html.Raw(ClientResources.RenderResources("DojoDashboardCompatibility"))
-
-    @Html.Raw(ClientResources.RenderResources("Dojo", new [] { ClientResourceType.Style }))
-
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href='@Paths.ToClientResource("Geta.Epi.Rating.Admin", "Styles/rating.css")' />
     <link type="text/css" rel="stylesheet" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" />
+    <link type="text/css" rel="stylesheet" href="//cdn.datatables.net/buttons/1.1.1/css/buttons.dataTables.min.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/buttons/1.1.1/js/dataTables.buttons.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script src="//cdn.datatables.net/buttons/1.1.1/js/buttons.html5.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.0/mustache.min.js"></script>
     <script type="text/javascript" src="Scripts/rating-admin.js"> </script>
     
 </head>
 <body>
-    <div class="epi-globalNavigationContainer">
-
-    </div>
-
+    
     @RenderBody()
 
-
-    <script>
-        dojoConfig = {
-            parseOnLoad: true,
-            isDebug: false,
-            async: true
-        };
-    </script>
-    <script type="text/javascript" src="@Paths.ToShellClientResource("ClientResources/dojo/dojo.js")"></script>
 </body>
 </html>
