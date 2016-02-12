@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace Geta.EpiRatingAlloySite.Api.Models
 {
@@ -12,5 +13,6 @@ namespace Geta.EpiRatingAlloySite.Api.Models
 
         [JsonProperty("contentId")]
         public string ContentId { get; set; }
+
     }
 }

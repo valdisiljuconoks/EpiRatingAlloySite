@@ -75,6 +75,8 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
             public DateTime? DateFrom { get; set; }
             [JsonProperty("dateTo")]
             public DateTime? DateTo { get; set; }
+            [JsonProperty("contentId")]
+            public string ContentId { get; set; }
         }
 
         [Route("getratings")]
@@ -99,20 +101,23 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
 
                 if (filterParams != null)
                 {
-                    ratings = ratings.Where(r => (!filterParams.DateFrom.HasValue || (filterParams.DateFrom.HasValue && r.Created >= filterParams.DateFrom.Value)) &&
-                                                 (!filterParams.DateTo.HasValue || (filterParams.DateTo.HasValue && r.Created <= filterParams.DateTo.Value)));
+                    ratings =
+                        ratings.Where(r => (!filterParams.DateFrom.HasValue || (filterParams.DateFrom.HasValue && r.Created >= filterParams.DateFrom.Value)) &&
+                                           (!filterParams.DateTo.HasValue || (filterParams.DateTo.HasValue && r.Created <= filterParams.DateTo.Value)));
                 }
 
                 var ratingTableData = new RatingTableData()
                 {
                     PageName = ratingPageContent.Name,
-                    Comments = ratings.Select(r => r.Text).Where(r => !string.IsNullOrEmpty(r)),
                     Rating = (int)ratings.Select(r => r.Rating).Sum(),
                     RatingEnabled = ratingPage.RatingEnabled,
                     ContentId = ratingPageContent.ContentLink.ID.ToString(),
                     ContentUrl = PageEditing.GetEditUrl(ratingPageContent.ContentLink)
                 };
 
+                var comments = ratings.Where(r => !string.IsNullOrEmpty(r.Text)).Select(r => new RatingCommentDto { CommentText = r.Text, CommentDate = r.Created });
+                ratingTableData.Comments = comments;
+                ratingTableData.ShortComments = comments.OrderByDescending(c => c.CommentDate).Take(5);
                 ratingList.Add(ratingTableData);
             }
 
@@ -123,6 +128,29 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
 
             return ratingInfo;
         }
+
+
+        [Route("getpagecomments")]
+        [HttpGet]
+        public RatingTableData GetPageComments([FromUri] RatingFilter filterParams)
+        {
+            var ratingTableData = new RatingTableData();
+
+            ContentReference contentRef;
+
+            if (ContentReference.TryParse(filterParams.ContentId, out contentRef))
+            {
+                var ratingPageContent = _loader.Get<IContent>(contentRef);
+                var ratings = GetReviews(contentRef);
+
+                ratingTableData.PageName = ratingPageContent.Name;
+                ratingTableData.ContentId = ratingPageContent.ContentLink.ID.ToString();
+                ratingTableData.Comments =
+                    ratings.Where(r => !string.IsNullOrEmpty(r.Text)).Select(r => new RatingCommentDto { CommentText = r.Text, CommentDate = r.Created });
+            }
+            return ratingTableData;
+        }
+
 
         public IEnumerable<Review> GetReviews(ContentReference contentReference)
         {

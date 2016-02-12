@@ -1,10 +1,12 @@
-﻿
+﻿@using EPiServer.Shell
+
+
 <div class="epi-padding">
     <div class="epi-contentArea">
         <h1 class="EP-prefix">Page Rating Overview</h1>
-        <div class="rating-filter-content">
+        <div class="epi-padding">
             <label>From:</label>
-            <input type="date" id="txtFrom" />
+            <input type="date" id="txtFrom"/>
             <label>To:</label>
             <input type="date" id="txtTo">
             <button id="btnFilter" class="epi-cmsButton">Filter</button>
@@ -16,8 +18,12 @@
     </div>
 </div>
 
-<script id="ratings-template" type="x-tmpl-mustache">
+<div id="loading-image">
+    <img src="@Paths.ToShellClientResource("ClientResources/dojox/widget/Standby/images/loading.gif")" alt="Please wait..." class="loadingIcon"/>
+</div>
 
+<script id="ratings-template" type="x-tmpl-mustache">
+    
     <table id="ratingTable" class="display">
         <thead>
             <tr>
@@ -25,6 +31,7 @@
                 <th>Rating</th>
                 <th>Comments</th>
                 <th>Rating enabled</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -38,10 +45,13 @@
                     {{rating}}
                 </td>
                 <td>
-                    {{#comments}}{{.}}; {{/comments}}
+                    {{#shortComments}}{{commentText}}; {{/shortComments}}
                 </td>
                 <td>
-                    <input name="ratingSwitch" type="checkbox" {{checked}} data-contentId="{{contentId}}" />
+                    <input name="ratingSwitch" type="checkbox" {{checked}} data-contentId="{{contentId}}" onclick="enableRating(this, event)" />
+                </td>
+                <td>
+                    <a href="Default/PageComment?contentId={{contentId}}">Show all comments</a>
                 </td>
             </tr>
             {{/ratingData}}

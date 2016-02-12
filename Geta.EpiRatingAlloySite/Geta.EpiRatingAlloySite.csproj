@@ -277,6 +277,7 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <ItemGroup>
     <Compile Include="Api\Controllers\PageRatingController.cs" />
+    <Compile Include="Api\Models\RatingCommentDto.cs" />
     <Compile Include="Api\Models\RatingDto.cs" />
     <Compile Include="Api\Models\RatingListDto.cs" />
     <Compile Include="Api\Models\RatingSwitchDto.cs" />
@@ -502,6 +503,7 @@
     <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\_ViewStart.cshtml" />
     <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\Web.config" />
     <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\Shared\_Layout.cshtml" />
+    <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\Default\PageComment.cshtml" />
     <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\Default\Index.cshtml" />
     <Content Include="modules\_protected\Geta.Epi.Rating.Admin\module.config" />
     <None Include="Web.Debug.config">

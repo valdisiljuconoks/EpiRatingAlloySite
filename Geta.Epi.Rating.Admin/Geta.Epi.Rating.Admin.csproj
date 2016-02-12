@@ -189,7 +189,6 @@
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="CustomViewEngine.cs" />
     <Compile Include="InitializeModule.cs" />
-    <Compile Include="Models\DefaultViewModel.cs" />
     <Compile Include="ModuleConst.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -212,7 +211,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Default\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config">
       <SubType>Designer</SubType>
@@ -220,6 +218,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\_Layout - Copy.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Default\PageComment.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

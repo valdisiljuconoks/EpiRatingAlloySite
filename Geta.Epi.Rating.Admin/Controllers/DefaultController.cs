@@ -10,5 +10,11 @@ namespace Geta.Epi.Rating.Admin.Controllers
             return View();
         }
 
+        public ActionResult PageComment()
+        {
+            ViewBag.ContentId = Request.QueryString["ContentId"];
+            return View("PageComment");
+        }
+
     }
 }
