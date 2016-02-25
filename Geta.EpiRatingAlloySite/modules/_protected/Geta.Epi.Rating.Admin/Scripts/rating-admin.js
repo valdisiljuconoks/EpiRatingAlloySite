@@ -1,29 +1,44 @@
-﻿$(function() {
+﻿$(function () {
 
-    GetRatings();
+    $("#loading-image").hide();
 
-    $("#btnFilter").on("click", function() {
-        GetRatings();
-    });
+    if ($("#ratings-template").length > 0) {
+        getRatings();
+
+        $("#btnFilter").on("click", function () {
+
+            var dateFrom = $("#txtFrom").val();
+            var dateTo = $("#txtTo").val();
+            var filterParams = { ratingEnabled: $("#chkRatingEnabled").is(":checked"), onlyRatedPages: $("#chkRatedPages").is(":checked") };
+
+            if (dateFrom.length > 0) {
+                $.extend(true, filterParams, { dateFrom: dateFrom });
+            }
+
+            if (dateTo.length > 0) {
+                $.extend(true, filterParams, { dateTo: dateTo });
+            }
+
+            getRatings(filterParams);
+        });
+    }
 
     if ($("#comments-template").length > 0) {
 
         var contentId = $("#comments-template").attr("data-contentId");
-        GetPageComments(contentId);
+        getPageComments(contentId);
     }
 
 
-    function GetRatings(filterParams) {
+    function getRatings(filterParams) {
 
         var url = "/api/rating/getratings";
-
-        var dateFrom = $("#txtFrom").val();
-        var dateTo = $("#txtTo").val();
-
-        if (dateFrom != null || dateTo != null) {
-            url = url + "?" + $.param({ dateFrom: dateFrom, dateTo: dateTo });
+        
+        if (filterParams != null) {
+            url = url + "?" + $.param(filterParams);
         }
 
+        $("#loading-image").show();
         $.ajax({
                 type: "GET",
                 url: url
@@ -40,26 +55,51 @@
                 var template = $("#ratings-template").html();
                 var info = Mustache.to_html(template, data);
                 $("#tablePlaceholder").html(info);
-                $("#ratingTable").DataTable({
-                    dom: '<B><f>rtip',
-                    buttons: [
-                        {
-                            extend: 'excelHtml5',
-                            text: 'Export',
-                            filename: "PageRatingData",
-                            className: "data-table-button"
-                        }
-                    ]
-                });
+                $("#ratingTable")
+                    .DataTable({
+                        "columnDefs": [
+                            {
+                                "targets": [7, 8, 9],
+                                "visible": false,
+                                "searchable": false
+                            },
+                            {
+                                "targets": [5,6],
+                                "searchable": false,
+                                "orderable": false
+                            }
+                        ],
+                        "order": [[4, "desc"]],
+
+                        dom: "Bfrtip",
+                        buttons: [
+                            {
+                                extend: "excelHtml5",
+                                text: "Export",
+                                filename: "PageRatingData",
+                                exportOptions: {
+                                    columns: [0, 1, 7, 8, 9]
+                                }
+                            }
+                        ]
+                    });
+
+
+                $("#ratingTable").on("click", ".ratingSwitch", function (e) { enableRating(this, e); });
+
             })
             .fail(function(error) {
                 console.log(error);
                 //show error
+            })
+            .always(function() {
+                $("#loading-image").hide();
             });
     }
 
-    function GetPageComments(contentId) {
+    function getPageComments(contentId) {
 
+        $("#loading-image").show();
         $.ajax({
             type: "GET",
             url: "/api/rating/getpagecomments" + "?contentId=" + contentId
@@ -69,36 +109,43 @@
                 var template = $("#comments-template").html();
                 var info = Mustache.to_html(template, data);
                 $("#tablePlaceholder").html(info);
-                $("#pageTitle").text(data.pageName);
+                if (data.ratingData.length) {
+                    $("#pageTitle").text(data.ratingData[0].pageName);
+                }
             })
             .fail(function(error) {
                 console.log(error);
                 //show error
+            })
+            .always(function () {
+                $("#loading-image").hide();
             });
+    }
+
+
+    function enableRating(element, e) {
+
+        var urlEnableRating = "/api/rating/enablerating";
+        var contentId = $(element).attr("data-contentId");
+
+        if (confirm("By changing this value for this page it will be published. Do you want to proceed ?") === true) {
+
+            $.ajax({
+                type: "POST",
+                url: urlEnableRating,
+                data: { contentId: contentId, ratingEnabled: element.checked }
+            })
+                .done(function (data) {
+
+                })
+                .fail(function (error) {
+                    console.log(error);
+                });
+        } else {
+            e.preventDefault();
+            return false;
+        }
+        return true;
     }
 });
 
-function enableRating(element, e) {
-
-    var urlEnableRating = "/api/rating/enablerating";
-    var contentId = $(element).attr("data-contentId");
-
-    if (confirm("By changing this value for this page it will be published. Do you want to proceed ?") === true) {
-
-        $.ajax({
-            type: "POST",
-            url: urlEnableRating,
-            data: { contentId: contentId, ratingEnabled: element.checked }
-        })
-            .done(function (data) {
-
-            })
-            .fail(function (error) {
-                console.log(error);
-            });
-    } else {
-        e.preventDefault();
-        return false;
-    }
-    return true;
-}

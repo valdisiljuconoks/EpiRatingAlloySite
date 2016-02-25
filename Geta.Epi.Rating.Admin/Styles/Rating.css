@@ -19,6 +19,6 @@
         z-index: 10000;
     }
 
- .data-table-button, .epi-cmsButton {
-    
+.rating-table {
+    width: 100%;
 }

@@ -10,8 +10,8 @@ namespace Geta.Epi.Rating.Admin
     {
         public void Initialize(InitializationEngine context)
         {
-            RegisterRoute(RouteTable.Routes, "Default");
-            ViewEngines.Engines.Add(new CustomViewEngine());
+            RegisterRoute(RouteTable.Routes, "Rating");
+            ViewEngines.Engines.Add(new RatingViewEngine());
         }
 
         public void Uninitialize(InitializationEngine context)

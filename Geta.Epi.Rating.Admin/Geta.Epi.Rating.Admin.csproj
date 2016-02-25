@@ -186,8 +186,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\DefaultController.cs" />
-    <Compile Include="CustomViewEngine.cs" />
+    <Compile Include="Controllers\RatingController.cs" />
+    <Compile Include="RatingViewEngine.cs" />
     <Compile Include="InitializeModule.cs" />
     <Compile Include="ModuleConst.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -209,7 +209,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Default\Index.cshtml" />
+    <Content Include="Views\Rating\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
@@ -217,10 +217,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Shared\_Layout - Copy.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Default\PageComment.cshtml" />
+    <Content Include="Views\Rating\PageComment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

@@ -279,8 +279,9 @@
     <Compile Include="Api\Controllers\PageRatingController.cs" />
     <Compile Include="Api\Models\RatingCommentDto.cs" />
     <Compile Include="Api\Models\RatingDto.cs" />
+    <Compile Include="Api\Models\RatingFilterDto.cs" />
     <Compile Include="Api\Models\RatingListDto.cs" />
-    <Compile Include="Api\Models\RatingSwitchDto.cs" />
+    <Compile Include="Api\Models\RatingTableDataDto.cs" />
     <Compile Include="Api\Models\ResponseDto.cs" />
     <Compile Include="Business\Channels\DisplayResolutionBase.cs" />
     <Compile Include="Business\Channels\DisplayResolutions.cs" />
@@ -503,8 +504,8 @@
     <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\_ViewStart.cshtml" />
     <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\Web.config" />
     <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\Shared\_Layout.cshtml" />
-    <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\Default\PageComment.cshtml" />
-    <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\Default\Index.cshtml" />
+    <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\Rating\PageComment.cshtml" />
+    <Content Include="modules\_protected\Geta.Epi.Rating.Admin\Views\Rating\Index.cshtml" />
     <Content Include="modules\_protected\Geta.Epi.Rating.Admin\module.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

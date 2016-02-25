@@ -2,9 +2,9 @@
 
 namespace Geta.Epi.Rating.Admin
 {
-    public class CustomViewEngine : RazorViewEngine
+    public class RatingViewEngine : RazorViewEngine
     {
-        public CustomViewEngine()
+        public RatingViewEngine()
         {
             var basepath = "~/modules/_protected/" + ModuleConst.ModuleName;
 

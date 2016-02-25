@@ -9,6 +9,10 @@
             <input type="date" id="txtFrom"/>
             <label>To:</label>
             <input type="date" id="txtTo">
+            <input type="checkbox" id="chkRatingEnabled"/>
+            <label>Rating enabled</label>
+            <input type="checkbox" id="chkRatedPages" />
+            <label>Only rated pages</label>
             <button id="btnFilter" class="epi-cmsButton">Filter</button>
         </div>
 
@@ -24,14 +28,19 @@
 
 <script id="ratings-template" type="x-tmpl-mustache">
     
-    <table id="ratingTable" class="display">
+    <table id="ratingTable" class="display rating-table" width="100%">
         <thead>
             <tr>
                 <th>Page Name</th>
                 <th>Rating</th>
+                <th>Total rating count</th>
                 <th>Comments</th>
+                <th>Last feedback</th>
                 <th>Rating enabled</th>
                 <th></th>
+                <th>Positive ratings</th>
+                <th>Negative ratings</th>
+                <th>Comments</th>
             </tr>
         </thead>
         <tbody>
@@ -39,19 +48,34 @@
             {{#ratingData}}
             <tr>
                 <td>
-                    <a href="{{contentUrl}}" target="_parent">{{pageName}}</a>
+                    <a href="{{contentUrl}}" target="_parent" title="{{pageFriendlyUrl}}">{{pageName}}</a>
                 </td>
                 <td>
                     {{rating}}
                 </td>
                 <td>
-                    {{#shortComments}}{{commentText}}; {{/shortComments}}
+                    {{ratingCount}}
                 </td>
                 <td>
-                    <input name="ratingSwitch" type="checkbox" {{checked}} data-contentId="{{contentId}}" onclick="enableRating(this, event)" />
+                    {{#shortComments}}{{commentText}}<br />{{/shortComments}}
                 </td>
                 <td>
-                    <a href="Default/PageComment?contentId={{contentId}}">Show all comments</a>
+                    {{lastCommentDateFormatted}}
+                </td>
+                <td>
+                    <input class="ratingSwitch" type="checkbox" {{checked}} data-contentId="{{contentId}}" />
+                </td>
+                <td>
+                    <a href="Rating/PageComment?contentId={{contentId}}">Show all comments</a>
+                </td>
+                <td>
+                    {{positiveRatingCount}}
+                </td>
+                <td>
+                    {{negativeRatingCount}}
+                </td>
+                <td>
+                    {{#comments}}<p>{{commentText}}</p>{{/comments}}
                 </td>
             </tr>
             {{/ratingData}}

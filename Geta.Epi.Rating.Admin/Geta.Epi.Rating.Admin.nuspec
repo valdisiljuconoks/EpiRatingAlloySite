@@ -14,7 +14,7 @@
   </metadata>
 <files>
     <file src="bin\Geta.Epi.Rating.Admin.dll" target="lib\net46\Geta.Epi.Rating.Admin.dll" />
-    <file src="Views\Default\*" target="content\modules\_protected\Geta.Epi.Rating.Admin\Views\Default" />
+    <file src="Views\Rating\*" target="content\modules\_protected\Geta.Epi.Rating.Admin\Views\Rating" />
     <file src="Views\Shared\_Layout.cshtml" target="content\modules\_protected\Geta.Epi.Rating.Admin\Views\Shared\_Layout.cshtml" />
     <file src="Views\_ViewStart.cshtml" target="content\modules\_protected\Geta.Epi.Rating.Admin\Views\_ViewStart.cshtml" />
     <file src="Scripts\*" target="content\modules\_protected\Geta.Epi.Rating.Admin\Scripts" />

@@ -10,8 +10,15 @@
     padding-bottom: 1em;
 }
 
+.loadingIcon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -16px;
+        margin-top: -16px;
+        z-index: 10000;
+    }
 
-
- .data-table-button, .epi-cmsButton {
-    
+.rating-table {
+    width: 100%;
 }

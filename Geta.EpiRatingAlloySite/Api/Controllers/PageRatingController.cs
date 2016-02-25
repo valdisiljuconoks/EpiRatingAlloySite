@@ -5,7 +5,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using EPiServer;
-using EPiServer.Cms.Shell;
 using EPiServer.Core;
 using EPiServer.Filters;
 using EPiServer.Logging;
@@ -19,6 +18,7 @@ using ILogger = EPiServer.Logging.ILogger;
 using EPiServer.Web.Routing;
 using EPiServer.Editor;
 using Newtonsoft.Json;
+using WebGrease.Css.Extensions;
 
 namespace Geta.EpiRatingAlloySite.Api.Controllers
 {
@@ -47,7 +47,7 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
         [HttpPost]
         public void RatePage(RatingDto ratingData)
         {
-            ContentReference reviewPageReference;
+            ContentReference reviewPageReference; 
             if (ContentReference.TryParse(ratingData.ContentId, out reviewPageReference))
             {
                 var review = new ReviewModel()
@@ -69,72 +69,85 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
             }
         }
 
-        public class RatingFilter
-        {
-            [JsonProperty("dateFrom")]
-            public DateTime? DateFrom { get; set; }
-            [JsonProperty("dateTo")]
-            public DateTime? DateTo { get; set; }
-            [JsonProperty("contentId")]
-            public string ContentId { get; set; }
-        }
-
         [Route("getratings")]
         [HttpGet]
-        public RatingListDto GetRatings([FromUri]RatingFilter filterParams)
+        public RatingListDto GetRatings([FromUri]RatingFilterDto filterParams)
         {
+            var ratingDataList = new RatingListDto();
             var filter = new FilterContentForVisitor();
             var pages = GetChildPages(ContentReference.StartPage).ToList();
             filter.Filter(pages);
-            var ratingList = new List<RatingTableData>();
+            var ratingTableDataList = new List<RatingTableDataDto>();
 
-            foreach (var ratingPage in pages.OfType<IRatingPage>())
+            var ratingInterfacePages = filterParams != null && filterParams.RatingEnabled ?
+                pages.OfType<IRatingPage>().Where(p => p.RatingEnabled == filterParams.RatingEnabled) : pages.OfType<IRatingPage>();
+
+            foreach (var ratingPage in ratingInterfacePages)
             {
-                var ratingPageContent = (IContent)ratingPage;
-
-                var ratings = GetReviews(ratingPageContent.ContentLink);
+                var ratingContent = (IContent)ratingPage;
+                var ratings = _reviewService.GetReviews(ratingContent.ContentLink);
 
                 if (ratings == null)
                 {
                     continue;
                 }
 
-                if (filterParams != null)
-                {
-                    ratings =
-                        ratings.Where(r => (!filterParams.DateFrom.HasValue || (filterParams.DateFrom.HasValue && r.Created >= filterParams.DateFrom.Value)) &&
-                                           (!filterParams.DateTo.HasValue || (filterParams.DateTo.HasValue && r.Created <= filterParams.DateTo.Value)));
-                }
+                var ratingsList = ratings.ToList();
 
-                var ratingTableData = new RatingTableData()
+                var ratingTableData = new RatingTableDataDto
                 {
-                    PageName = ratingPageContent.Name,
-                    Rating = (int)ratings.Select(r => r.Rating).Sum(),
+                    PageName = ratingContent.Name,
                     RatingEnabled = ratingPage.RatingEnabled,
-                    ContentId = ratingPageContent.ContentLink.ID.ToString(),
-                    ContentUrl = PageEditing.GetEditUrl(ratingPageContent.ContentLink)
+                    ContentId = ratingContent.ContentLink.ID.ToString(),
+                    ContentUrl = PageEditing.GetEditUrl(ratingContent.ContentLink),
+                    PageFriendlyUrl = _urlResolver.GetUrl(ratingContent.ContentLink)
                 };
 
-                var comments = ratings.Where(r => !string.IsNullOrEmpty(r.Text)).Select(r => new RatingCommentDto { CommentText = r.Text, CommentDate = r.Created });
-                ratingTableData.Comments = comments;
-                ratingTableData.ShortComments = comments.OrderByDescending(c => c.CommentDate).Take(5);
-                ratingList.Add(ratingTableData);
+                if (ratingsList.Any())
+                {
+                    if (filterParams != null)
+                    {
+                        ratingsList = ratingsList.Where(r => !filterParams.DateFrom.HasValue || r.Created.Date >= filterParams.DateFrom.Value.Date &&
+                                                             (!filterParams.DateTo.HasValue || r.Created.Date <= filterParams.DateTo.Value.Date)).ToList();
+                    }
+
+                    var comments =
+                        ratingsList.Where(r => !string.IsNullOrEmpty(r.Text))
+                                   .Select(r => new RatingCommentDto { CommentText = r.Text, CommentDate = r.Created }).ToList();
+                    ratingTableData.Comments = comments;
+                    ratingTableData.ShortComments = comments.OrderByDescending(c => c.CommentDate).Take(5);
+
+                    ratingTableData.ShortComments.ForEach(comment =>
+                    {
+                        if (comment.CommentText.Length > 500)
+                        {
+                            comment.CommentText = comment.CommentText.Substring(0, 500) + "...";
+                        }
+                    });
+
+                    ratingTableData.Rating = (int)ratingsList.Select(r => r.Rating).Sum();
+                    ratingTableData.LastCommentDate = comments.OrderByDescending(c => c.CommentDate).First().CommentDate;
+                    ratingTableData.RatingCount = ratingsList.Count;
+                    ratingTableData.PositiveRatingCount = ratingsList.Count(r => r.Rating > 0);
+                    ratingTableData.NegativeRatingCount = ratingsList.Count(r => r.Rating < 0);
+                }
+
+                if (filterParams == null || !filterParams.OnlyRatedPages || (filterParams.OnlyRatedPages && ratingsList.Any()))
+                {
+                    ratingTableDataList.Add(ratingTableData);
+                }
             }
+            ratingDataList.RatingData = ratingTableDataList;
 
-            var ratingInfo = new RatingListDto()
-            {
-                RatingData = ratingList
-            };
-
-            return ratingInfo;
+            return ratingDataList;
         }
 
 
         [Route("getpagecomments")]
         [HttpGet]
-        public RatingTableData GetPageComments([FromUri] RatingFilter filterParams)
+        public RatingListDto GetPageComments([FromUri]RatingFilterDto filterParams)
         {
-            var ratingTableData = new RatingTableData();
+            var ratingTableData = new RatingTableDataDto();
 
             ContentReference contentRef;
 
@@ -146,9 +159,10 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
                 ratingTableData.PageName = ratingPageContent.Name;
                 ratingTableData.ContentId = ratingPageContent.ContentLink.ID.ToString();
                 ratingTableData.Comments =
-                    ratings.Where(r => !string.IsNullOrEmpty(r.Text)).Select(r => new RatingCommentDto { CommentText = r.Text, CommentDate = r.Created });
+                    ratings.Where(r => !string.IsNullOrEmpty(r.Text)).OrderByDescending(r => r.Created).
+                    Select(r => new RatingCommentDto { CommentText = r.Text, CommentDate = r.Created });
             }
-            return ratingTableData;
+            return new RatingListDto { RatingData = new List<RatingTableDataDto> { ratingTableData } };
         }
 
 
@@ -159,7 +173,7 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
             //var product = _loader.Get<IContent>(contentReference);
 
             var assetFolder = contentAssetHelper.GetAssetFolder(contentReference);
-
+            
             if(assetFolder == null)
             {
                 return null;
@@ -171,7 +185,7 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
 
         [Route("enablerating")]
         [HttpPost]
-        public void EnableRating(RatingSwitchDto actionInfo)
+        public void EnableRating(RatingDto actionInfo)
         {
             ContentReference reviewPageReference;
 
@@ -192,7 +206,7 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
 
         [Route("pageispublished")]
         [HttpGet]
-        public ResponseDto PageIsPublished(RatingSwitchDto actionInfo)
+        public ResponseDto PageIsPublished(RatingDto actionInfo)
         {
             ContentReference reviewPageReference;
 

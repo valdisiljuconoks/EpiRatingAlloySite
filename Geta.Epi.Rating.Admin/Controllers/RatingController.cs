@@ -2,8 +2,8 @@
 
 namespace Geta.Epi.Rating.Admin.Controllers
 {
-    [EPiServer.PlugIn.GuiPlugIn(Area = EPiServer.PlugIn.PlugInArea.AdminMenu, DisplayName = "Page Rating Overview", UrlFromModuleFolder = "Default")]
-    public class DefaultController: Controller
+    [EPiServer.PlugIn.GuiPlugIn(Area = EPiServer.PlugIn.PlugInArea.AdminMenu, DisplayName = "Page Rating Overview", UrlFromModuleFolder = "Rating")]
+    public class RatingController: Controller
     {
         public ActionResult Index()
         {
