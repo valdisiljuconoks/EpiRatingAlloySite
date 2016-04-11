@@ -41,6 +41,7 @@
                 <th>Positive ratings</th>
                 <th>Negative ratings</th>
                 <th>Comments</th>
+                <th>Page Name</th>
             </tr>
         </thead>
         <tbody>
@@ -57,7 +58,7 @@
                     {{ratingCount}}
                 </td>
                 <td>
-                    {{#shortComments}}{{commentText}}<br />{{/shortComments}}
+                    {{#shortComments}}{{shortCommentText}}<br />{{/shortComments}}
                 </td>
                 <td>
                     {{lastCommentDateFormatted}}
@@ -75,7 +76,10 @@
                     {{negativeRatingCount}}
                 </td>
                 <td>
-                    {{#comments}}<p>{{commentText}}</p>{{/comments}}
+                    {{#comments}}{{commentTextWithLineBreak}}{{/comments}}
+                </td>
+                <td>
+                    {{pageName}}
                 </td>
             </tr>
             {{/ratingData}}

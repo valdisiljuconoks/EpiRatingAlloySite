@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geta.EpiRatingAlloySite", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geta.Epi.Rating.Admin", "Geta.Epi.Rating.Admin\Geta.Epi.Rating.Admin.csproj", "{5733633A-06EF-4295-A23C-4720717AF1BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geta.Epi.Rating.PageProperty", "Geta.Epi.Rating.PageProperty\Geta.Epi.Rating.PageProperty.csproj", "{9CD1ED1F-5024-4958-B5FB-F78C2C1E341C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5733633A-06EF-4295-A23C-4720717AF1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5733633A-06EF-4295-A23C-4720717AF1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5733633A-06EF-4295-A23C-4720717AF1BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CD1ED1F-5024-4958-B5FB-F78C2C1E341C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CD1ED1F-5024-4958-B5FB-F78C2C1E341C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CD1ED1F-5024-4958-B5FB-F78C2C1E341C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CD1ED1F-5024-4958-B5FB-F78C2C1E341C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

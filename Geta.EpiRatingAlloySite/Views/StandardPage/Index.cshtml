@@ -8,6 +8,13 @@
 <div class="row">
     <div class="span8 clearfix" @Html.EditAttributes(x => x.CurrentPage.MainBody)>
         @Html.DisplayFor(m => m.CurrentPage.MainBody)
+
+        @using (Html.BeginXForm(Model.CurrentPage.FormField, new { Action = "/xformpost" }))
+        {
+            Html.RenderXForm(Model.CurrentPage.FormField);
+        }
+
     </div>
 </div>
 @Html.PropertyFor(x => x.CurrentPage.MainContentArea, new { CssClass = "row", Tag = Global.ContentAreaTags.TwoThirdsWidth })
+

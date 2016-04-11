@@ -1,8 +1,17 @@
+using EPiServer;
+using EPiServer.Cms.Shell.UI.ObjectEditing.EditorDescriptors;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
-using System.ComponentModel.DataAnnotations;
+using EPiServer.ServiceLocation;
+using EPiServer.Shell.ObjectEditing;
+using EPiServer.XForms;
+using Geta.EPi.Rating.Core;
+using Geta.EpiRatingAlloySite.Models.ViewModels;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Geta.EpiRatingAlloySite.Models.Pages
 {
@@ -13,6 +22,28 @@ namespace Geta.EpiRatingAlloySite.Models.Pages
     [SiteImageUrl(Global.StaticGraphicsFolderPath + "page-type-thumbnail-standard.png")]
     public class StandardPage : SitePageData, IRatingPage
     {
+        public override void SetDefaultValues(ContentType contentType)
+        {
+            base.SetDefaultValues(contentType);
+
+            //var repo = ServiceLocator.Current.GetInstance<IContentLoader>();
+            //var reviewService = ServiceLocator.Current.GetInstance<IReviewService>();
+            //var currentPage = repo.Get<StandardPage>(contentType.GUID);
+
+            //var contentRef = new ContentReference(contentType.ID);
+
+            //var reviews = reviewService.GetReviews(contentRef);
+
+            //var comments = reviews.Select(x => new CommentModel() { Comment = x.Text, CommentDate = x.Created.ToString() });
+
+            //Comments = new List<CommentModel>(comments);
+        }
+
+        public StandardPage()
+        {
+
+        }
+
         [Display(
             GroupName = SystemTabNames.Content,
             Order = 310)]
@@ -29,5 +60,24 @@ namespace Geta.EpiRatingAlloySite.Models.Pages
 
         [Display(GroupName = "Rating")]
         public virtual bool IgnorePublish { get; set; }
+
+        [UIHint(EPiServer.Web.UIHint.Textarea)]
+        [Editable(false)]
+        public virtual string CommentsLink { get; set; }
+
+        //[Display(GroupName = "Rating")]
+        //[Editable(true)]
+        //[EditorDescriptor(EditorDescriptorType = typeof(CollectionEditorDescriptor<CommentModel>))]
+        //public virtual IList<CommentModel> Comments { get; set; }
+
+        public virtual XForm FormField { get; set; }
+
+        [Ignore]
+        public virtual string ActionUri { get; set; }
+
+
+        [Display(Name = "Rating data", Description = "Main Title", GroupName = "Rating", Order = 200)]
+        [UIHint("RatingProperty")]
+        public virtual string MainTitle { get; set; }
     }
 }

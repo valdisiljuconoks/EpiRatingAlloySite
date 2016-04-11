@@ -1,0 +1,48 @@
+﻿.ratingTable {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+    .ratingTable > thead > tr > th,
+    .ratingTable > tbody > tr > th,
+    .ratingTable > tfoot > tr > th,
+    .ratingTable > thead > tr > td,
+    .ratingTable > tbody > tr > td,
+    .ratingTable > tfoot > tr > td {
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
+    }
+
+    .ratingTable > thead > tr > th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #ddd;
+        font-weight: bold;
+    }
+
+    .ratingTable > caption + thead > tr:first-child > th,
+    .ratingTable > colgroup + thead > tr:first-child > th,
+    .ratingTable > thead:first-child > tr:first-child > th,
+    .ratingTable > caption + thead > tr:first-child > td,
+    .ratingTable > colgroup + thead > tr:first-child > td,
+    .ratingTable > thead:first-child > tr:first-child > td {
+        border-top: 0;
+    }
+
+    .ratingTable > tbody + tbody {
+        border-top: 2px solid #ddd;
+    }
+
+    .ratingTable .ratingTable {
+        background-color: #fff;
+    }
+
+.ratingTable-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f4f4ee;
+}
+
+.ratingTableFirstColumnWidth {
+    width: 10%;   
+}

@@ -9,7 +9,7 @@
 
             var dateFrom = $("#txtFrom").val();
             var dateTo = $("#txtTo").val();
-            var filterParams = { ratingEnabled: $("#chkRatingEnabled").is(":checked"), onlyRatedPages: $("#chkRatedPages").is(":checked") };
+            var filterParams = { ratingEnabled: $("#chkRatingEnabled").is(":checked"), onlyRatedPages: $("#chkRatedPages").is(":checked"), applyFilter: true };
 
             if (dateFrom.length > 0) {
                 $.extend(true, filterParams, { dateFrom: dateFrom });
@@ -59,7 +59,7 @@
                     .DataTable({
                         "columnDefs": [
                             {
-                                "targets": [7, 8, 9],
+                                "targets": [7, 8, 9, 10],
                                 "visible": false,
                                 "searchable": false
                             },
@@ -78,7 +78,13 @@
                                 text: "Export",
                                 filename: "PageRatingData",
                                 exportOptions: {
-                                    columns: [0, 1, 7, 8, 9]
+                                    columns: [10, 1, 7, 8, 9],
+                                    format: {
+                                        body: function (data)
+                                        {
+                                            return data.replace(/{nl}/g, "\n");
+                                        }
+                                    }
                                 }
                             }
                         ]

@@ -80,7 +80,11 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
             var ratingTableDataList = new List<RatingTableDataDto>();
 
             var ratingInterfacePages = filterParams != null && filterParams.RatingEnabled ?
-                pages.OfType<IRatingPage>().Where(p => p.RatingEnabled == filterParams.RatingEnabled) : pages.OfType<IRatingPage>();
+                pages.OfType<IRatingPage>().Where(p => p.RatingEnabled == filterParams.RatingEnabled).ToList() : pages.OfType<IRatingPage>().ToList();
+
+
+            //var reviews = GetReviews(ratingInterfacePages);
+
 
             foreach (var ratingPage in ratingInterfacePages)
             {
@@ -111,22 +115,24 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
                                                              (!filterParams.DateTo.HasValue || r.Created.Date <= filterParams.DateTo.Value.Date)).ToList();
                     }
 
-                    var comments =
-                        ratingsList.Where(r => !string.IsNullOrEmpty(r.Text))
+                    var allCommentsDto = ratingsList.Where(r => !string.IsNullOrEmpty(r.Text))
                                    .Select(r => new RatingCommentDto { CommentText = r.Text, CommentDate = r.Created }).ToList();
-                    ratingTableData.Comments = comments;
-                    ratingTableData.ShortComments = comments.OrderByDescending(c => c.CommentDate).Take(5);
 
-                    ratingTableData.ShortComments.ForEach(comment =>
-                    {
-                        if (comment.CommentText.Length > 500)
+                    ratingTableData.ShortComments = new List<RatingCommentDto>(allCommentsDto.OrderByDescending(c => c.CommentDate).Take(5)
+                        .Select(c => new RatingCommentDto
                         {
-                            comment.CommentText = comment.CommentText.Substring(0, 500) + "...";
-                        }
-                    });
+                            CommentText = c.CommentText.Length > 500 ? c.CommentText.Substring(0, 500) + "..." : c.CommentText,
+                            CommentDate = c.CommentDate
+                        }));
+
+                    ratingTableData.Comments = new List<RatingCommentDto>(allCommentsDto.Select(comment => new RatingCommentDto
+                    {
+                        CommentText = comment.CommentText + "{nl}",
+                        CommentDate = comment.CommentDate
+                    }));
 
                     ratingTableData.Rating = (int)ratingsList.Select(r => r.Rating).Sum();
-                    ratingTableData.LastCommentDate = comments.OrderByDescending(c => c.CommentDate).First().CommentDate;
+                    ratingTableData.LastCommentDate = allCommentsDto.OrderByDescending(c => c.CommentDate).First().CommentDate;
                     ratingTableData.RatingCount = ratingsList.Count;
                     ratingTableData.PositiveRatingCount = ratingsList.Count(r => r.Rating > 0);
                     ratingTableData.NegativeRatingCount = ratingsList.Count(r => r.Rating < 0);
@@ -145,7 +151,7 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
 
         [Route("getpagecomments")]
         [HttpGet]
-        public RatingListDto GetPageComments([FromUri]RatingFilterDto filterParams)
+        public RatingListDto GetPageComments([FromUri] RatingFilterDto filterParams)
         {
             var ratingTableData = new RatingTableDataDto();
 
@@ -156,30 +162,53 @@ namespace Geta.EpiRatingAlloySite.Api.Controllers
                 var ratingPageContent = _loader.Get<IContent>(contentRef);
                 var ratings = GetReviews(contentRef);
 
-                ratingTableData.PageName = ratingPageContent.Name;
-                ratingTableData.ContentId = ratingPageContent.ContentLink.ID.ToString();
-                ratingTableData.Comments =
-                    ratings.Where(r => !string.IsNullOrEmpty(r.Text)).OrderByDescending(r => r.Created).
-                    Select(r => new RatingCommentDto { CommentText = r.Text, CommentDate = r.Created });
+                if (ratings != null)
+                {
+                    ratingTableData.PageName = ratingPageContent.Name;
+                    ratingTableData.ContentId = ratingPageContent.ContentLink.ID.ToString();
+                    ratingTableData.Comments =
+                        ratings.Where(r => !string.IsNullOrEmpty(r.Text)).OrderByDescending(r => r.Created).
+                                Select(r => new RatingCommentDto { CommentText = r.Text, CommentDate = r.Created });
+                }
             }
             return new RatingListDto { RatingData = new List<RatingTableDataDto> { ratingTableData } };
         }
 
 
+        public IEnumerable<Review> GetReviews(IEnumerable<IRatingPage> contentReferences)
+        {
+            var crs = contentReferences.OfType<PageData>().Select(x => x.ContentLink);
+
+            var assetFolders = new List<ContentAssetFolder>();
+
+            foreach (var r in crs)
+            {
+                assetFolders.Add(contentAssetHelper.GetAssetFolder(r));
+            }
+
+            //var items = _loader.GetItems(assetFolders.Select(x => x.ContentLink), CultureInfo.CurrentUICulture);
+
+            var items = new List<Review>();
+
+            foreach (var item in assetFolders)
+            {
+                items.AddRange(_loader.GetChildren<Review>(item.ContentLink, CultureInfo.CurrentUICulture));
+            }
+
+            return items;
+        }
+
+
         public IEnumerable<Review> GetReviews(ContentReference contentReference)
         {
-            
-            //contentReference.
-            //var product = _loader.Get<IContent>(contentReference);
-
             var assetFolder = contentAssetHelper.GetAssetFolder(contentReference);
             
             if(assetFolder == null)
             {
                 return null;
             }
-            return _loader.GetChildren<Review>(assetFolder.ContentLink);
-                //.OrderByDescending(m => m.StartPublish);
+
+            return _loader.GetChildren<Review>(assetFolder.ContentLink).OrderByDescending(m => m.StartPublish);
         }
 
 

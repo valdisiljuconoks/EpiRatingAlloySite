@@ -36,5 +36,8 @@ namespace Geta.EpiRatingAlloySite.Controllers
             var type = typeof(PageViewModel<>).MakeGenericType(page.GetOriginalType());
             return Activator.CreateInstance(type, page) as IPageViewModel<SitePageData>;
         }
+
+
+
     }
 }
