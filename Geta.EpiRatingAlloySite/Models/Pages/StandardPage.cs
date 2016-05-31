@@ -79,5 +79,8 @@ namespace Geta.EpiRatingAlloySite.Models.Pages
         [Display(Name = "Rating data", Description = "Main Title", GroupName = "Rating", Order = 200)]
         [UIHint("RatingProperty")]
         public virtual string MainTitle { get; set; }
+
+        
+        public virtual string SomeProperString { get; set; }
     }
 }

@@ -32,7 +32,7 @@
 
     function getRatings(filterParams) {
 
-        var url = "/api/rating/getratings";
+        var url = "/api/rating/pagerating/getratings";
         
         if (filterParams != null) {
             url = url + "?" + $.param(filterParams);
@@ -108,7 +108,7 @@
         $("#loading-image").show();
         $.ajax({
             type: "GET",
-            url: "/api/rating/getpagecomments" + "?contentId=" + contentId
+            url: "/api/rating/pagerating/getpagecomments" + "?contentId=" + contentId
     })
             .done(function(data) {
 
@@ -131,7 +131,7 @@
 
     function enableRating(element, e) {
 
-        var urlEnableRating = "/api/rating/enablerating";
+        var urlEnableRating = "/api/rating/pagerating/enablerating";
         var contentId = $(element).attr("data-contentId");
 
         if (confirm("By changing this value for this page it will be published. Do you want to proceed ?") === true) {

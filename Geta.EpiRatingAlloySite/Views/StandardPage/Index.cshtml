@@ -18,3 +18,6 @@
 </div>
 @Html.PropertyFor(x => x.CurrentPage.MainContentArea, new { CssClass = "row", Tag = Global.ContentAreaTags.TwoThirdsWidth })
 
+
+@Html.PropertyFor(x => x.CurrentPage.MainContentArea, new { Tag = "h2", CssClass = "muted" })
+@*@Html.DisplayFor(x => x.CurrentPage.SomeProperString, new { Tag = "dfdf" })*@
