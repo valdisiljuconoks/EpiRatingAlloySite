@@ -15,6 +15,7 @@
         if (!breadCrumbItem.Page.ContentLink.CompareToIgnoreWorkID(Model.CurrentPage.ContentLink))
         {
             <span class="divider">/</span>
+           
             @Html.MenuList(breadCrumbItem.Page.ContentLink, ItemTemplate)
         }
     }
@@ -29,3 +30,4 @@
         </ul>
     </div>
 </div> 
+<div></div>
