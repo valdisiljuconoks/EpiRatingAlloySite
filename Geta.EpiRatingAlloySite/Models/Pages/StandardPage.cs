@@ -65,10 +65,13 @@ namespace Geta.EpiRatingAlloySite.Models.Pages
         [Editable(false)]
         public virtual string CommentsLink { get; set; }
 
-        //[Display(GroupName = "Rating")]
-        //[Editable(true)]
-        //[EditorDescriptor(EditorDescriptorType = typeof(CollectionEditorDescriptor<CommentModel>))]
-        //public virtual IList<CommentModel> Comments { get; set; }
+        [Display(GroupName = "Rating")]
+        [Editable(true)]
+        [EditorDescriptor(EditorDescriptorType = typeof(CollectionEditorDescriptor<CommentModel>))]
+        public virtual IList<CommentModel> Comments { get; set; }
+
+        [EditorDescriptor(EditorDescriptorType = typeof(CollectionEditorDescriptor<LinkModel>))]
+        public virtual IList<LinkModel> LinkList { get; set; }
 
         public virtual XForm FormField { get; set; }
 
@@ -80,7 +83,12 @@ namespace Geta.EpiRatingAlloySite.Models.Pages
         [UIHint("RatingProperty")]
         public virtual string MainTitle { get; set; }
 
-        
+
         public virtual string SomeProperString { get; set; }
+
+
+        //[Ignore]
+        [ScaffoldColumn(false)]
+        public virtual IList<string> Bla { get; set; }
     }
 }
